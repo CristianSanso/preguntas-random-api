@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 )
 
@@ -18,6 +20,13 @@ var preguntas []Pregunta
 // Main
 
 func main() {
+	port := os.Getenv("PORT")
+	app := gin.New()
+	app.GET("/", func(ctx *gin.Context) {
+		ctx.String(200, "API Go funcionando")
+	})
+	app.Run(":" + port)
+
 	router := mux.NewRouter()
 
 	// Example data
