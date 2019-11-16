@@ -23,7 +23,7 @@ func main() {
 	port := os.Getenv("PORT")
 	app := gin.New()
 	app.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "API Go funcionando")
+		ctx.String(200, "API Go funcionando v2")
 	})
 	app.Run(":" + port)
 
