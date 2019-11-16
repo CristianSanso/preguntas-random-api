@@ -34,7 +34,9 @@ func main() {
 	preguntas = append(preguntas, Pregunta{ID: "2", Content: "¿Cuál es tu color preferido?"})
 
 	// Endpoints
-	app.GET("/preguntas", GetPreguntasEndpoint(ctx)).Methods("GET")
+	app.GET("/preguntas", func(ctx *gin.Context) {
+		ctx.JSON(200, preguntas)
+	})
 	router.HandleFunc("/preguntas/{id}", GetPreguntaEndpoint).Methods("GET")
 	router.HandleFunc("/preguntas/{id}", CreatePreguntaEndpoint).Methods("POST")
 	router.HandleFunc("/preguntas/{id}", DeletePreguntaEndpoint).Methods("DELETE")
@@ -52,10 +54,6 @@ func GetPreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
 		}
 	}
 	json.NewEncoder(writer).Encode(&Pregunta{}) // Responde vacio sino encuentra pregunta
-}
-
-func GetPreguntasEndpoint(ctx *gin.Context) {
-	ctx.String(200, preguntas)
 }
 
 func CreatePreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
