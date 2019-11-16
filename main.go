@@ -1,13 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/mux"
 )
 
 type Pregunta struct {
@@ -27,29 +23,23 @@ func main() {
 	port := os.Getenv("PORT")
 	app := gin.New()
 
-
 	// Routers
-	app.GET("/", home)
+	app.GET("/", Home)
 	app.GET("/preguntas", GetPreguntasEndpoint)
 	app.GET("/preguntas/{id}", GetPreguntaEndpoint)
-
-	app.POST("/preguntas/{id}", CreatePreguntaEndpoint)
-
+	//app.POST("/preguntas/{id}", CreatePreguntaEndpoint)
 	app.DELETE("/preguntas/{id}", DeletePreguntaEndpoint)
-
-	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
 // Endpoints
-
-func home(ctx *gin.Context) {
-	ctx.String(200, "API Go funcionando v4")
+func Home(ctx *gin.Context) {
+	ctx.String(200, "API Go funcionando v5")
+	return
 }
-
 func GetPreguntasEndpoint(ctx *gin.Context) {
 	ctx.JSON(200, preguntas)
+	return
 }
-
 func GetPreguntaEndpoint(ctx *gin.Context) {
 	param := ctx.Param("id")
 	for _, pregunta := range preguntas {
@@ -59,24 +49,24 @@ func GetPreguntaEndpoint(ctx *gin.Context) {
 		}
 	}
 	ctx.JSON(200, &Pregunta{}) // Responde vacio sino encuentra pregunta
+	return
 }
-
-func CreatePreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
+/* func CreatePreguntaEndpoint(ctx *gin.Context) {
+	param := ctx.Param("id")
 	var pregunta Pregunta
 	_ = json.NewDecoder(req.Body).Decode(&pregunta)
-	pregunta.ID = params["id"]
+	pregunta.ID = param
 	preguntas = append(preguntas, pregunta)
 	json.NewEncoder(writer).Encode(preguntas)
-}
-
-func DeletePreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
+} */
+func DeletePreguntaEndpoint(ctx *gin.Context) {
+	param := ctx.Param("id")
 	for index, pregunta := range preguntas {
-		if pregunta.ID == params["id"] {
+		if pregunta.ID == param {
 			preguntas = append(preguntas[:index], preguntas[index+1:]...)
+			ctx.String(200, "Success")
 			break
 		}
 	}
-	json.NewEncoder(writer).Encode(preguntas)
+	ctx.JSON(200, preguntas)
 }
