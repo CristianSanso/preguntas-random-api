@@ -20,23 +20,24 @@ var preguntas []Pregunta
 // Main
 
 func main() {
+	// Example data
+	preguntas = append(preguntas, Pregunta{ID: "1", Content: "¿Qué comida es la que mejor te sale?"})
+	preguntas = append(preguntas, Pregunta{ID: "2", Content: "¿Cuál es tu color preferido?"})
+
 	port := os.Getenv("PORT")
 	app := gin.New()
 	app.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "API Go funcionando v2")
+		ctx.String(200, "API Go funcionando v3")
+	})
+	app.GET("/preguntas", func(ctx *gin.Context) {
+		ctx.JSON(200, preguntas)
 	})
 	app.Run(":" + port)
 
 	router := mux.NewRouter()
 
-	// Example data
-	preguntas = append(preguntas, Pregunta{ID: "1", Content: "¿Qué comida es la que mejor te sale?"})
-	preguntas = append(preguntas, Pregunta{ID: "2", Content: "¿Cuál es tu color preferido?"})
-
 	// Endpoints
-	app.GET("/preguntas", func(ctx *gin.Context) {
-		ctx.JSON(200, preguntas)
-	})
+
 	router.HandleFunc("/preguntas/{id}", GetPreguntaEndpoint).Methods("GET")
 	router.HandleFunc("/preguntas/{id}", CreatePreguntaEndpoint).Methods("POST")
 	router.HandleFunc("/preguntas/{id}", DeletePreguntaEndpoint).Methods("DELETE")
