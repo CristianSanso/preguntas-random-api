@@ -26,35 +26,39 @@ func main() {
 
 	port := os.Getenv("PORT")
 	app := gin.New()
-	app.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "API Go funcionando v3")
-	})
-	app.GET("/preguntas", func(ctx *gin.Context) {
-		ctx.JSON(200, preguntas)
-	})
-	app.Run(":" + port)
 
-	router := mux.NewRouter()
 
-	// Endpoints
+	// Routers
+	app.GET("/", home)
+	app.GET("/preguntas", GetPreguntasEndpoint)
+	app.GET("/preguntas/{id}", GetPreguntaEndpoint)
 
-	router.HandleFunc("/preguntas/{id}", GetPreguntaEndpoint).Methods("GET")
-	router.HandleFunc("/preguntas/{id}", CreatePreguntaEndpoint).Methods("POST")
-	router.HandleFunc("/preguntas/{id}", DeletePreguntaEndpoint).Methods("DELETE")
+	app.POST("/preguntas/{id}", CreatePreguntaEndpoint)
+
+	app.DELETE("/preguntas/{id}", DeletePreguntaEndpoint)
 
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
 // Endpoints
-func GetPreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
+
+func home(ctx *gin.Context) {
+	ctx.String(200, "API Go funcionando v4")
+}
+
+func GetPreguntasEndpoint(ctx *gin.Context) {
+	ctx.JSON(200, preguntas)
+}
+
+func GetPreguntaEndpoint(ctx *gin.Context) {
+	param := ctx.Param("id")
 	for _, pregunta := range preguntas {
-		if pregunta.ID == params["id"] {
-			json.NewEncoder(writer).Encode(pregunta)
+		if pregunta.ID == param {
+			ctx.JSON(200, pregunta)
 			return
 		}
 	}
-	json.NewEncoder(writer).Encode(&Pregunta{}) // Responde vacio sino encuentra pregunta
+	ctx.JSON(200, &Pregunta{}) // Responde vacio sino encuentra pregunta
 }
 
 func CreatePreguntaEndpoint(writer http.ResponseWriter, req *http.Request) {
