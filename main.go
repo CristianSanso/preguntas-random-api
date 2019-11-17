@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,21 +20,17 @@ func main() {
 	preguntas = append(preguntas, Pregunta{ID: "1", Content: "¿Qué comida es la que mejor te sale?"})
 	preguntas = append(preguntas, Pregunta{ID: "2", Content: "¿Cuál es tu color preferido?"})
 
-	//port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	app := gin.New()
 	// Routers
 
 	app.GET("/", Home)
-
 	app.GET("/preguntas", GetPreguntas)
-
 	app.GET("/preguntas/:id", GetPreguntaByID)
-
 	app.POST("/preguntas", PostPregunta)
-
 	app.DELETE("/preguntas/:id", DeletePregunta)
 
-	app.Run(":3000")
+	app.Run(":" + port)
 }
 
 func Home(ctx *gin.Context) {
