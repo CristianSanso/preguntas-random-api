@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,39 +18,64 @@ func main() {
 	preguntas = append(preguntas, Pregunta{ID: "1", Content: "¿Qué comida es la que mejor te sale?"})
 	preguntas = append(preguntas, Pregunta{ID: "2", Content: "¿Cuál es tu color preferido?"})
 
-	port := os.Getenv("PORT")
+	//port := os.Getenv("PORT")
 	app := gin.New()
 	// Routers
 
-	app.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "API Go funcionando v5")
-	})
+	app.GET("/", Home)
 
-	app.GET("/preguntas/{id}", func(ctx *gin.Context) {
-		param := ctx.Param("id")
-		for _, pregunta := range preguntas {
-			if pregunta.ID == param {
-				ctx.JSON(200, pregunta)
-				return
-			}
+	app.GET("/preguntas", GetPreguntas)
+
+	app.GET("/preguntas/:id", GetPreguntaByID)
+
+	app.POST("/preguntas", PostPregunta)
+
+	app.DELETE("/preguntas/:id", DeletePregunta)
+
+	app.Run(":3000")
+}
+
+func Home(ctx *gin.Context) {
+	ctx.String(200, "API Go funcionando v6")
+}
+
+func GetPreguntas(ctx *gin.Context) {
+	ctx.JSON(200, preguntas)
+}
+
+func GetPreguntaByID(ctx *gin.Context) {
+	param := ctx.Param("id")
+	for _, pregunta := range preguntas {
+		if pregunta.ID == param {
+			ctx.JSON(200, pregunta)
+			return
 		}
-		ctx.JSON(200, &Pregunta{})
+	}
+	ctx.JSON(200, gin.H{
+		"id":      "null",
+		"Content": "null",
 	})
+}
 
-	app.DELETE("/preguntas/{id}", func(ctx *gin.Context) {
-		param := ctx.Param("id")
-		for index, pregunta := range preguntas {
-			if pregunta.ID == param {
-				preguntas = append(preguntas[:index], preguntas[index+1:]...)
-				ctx.JSON(200, gin.H{
-					"status":  "success",
-					"message": pregunta,
-				})
-				break
-			}
+func PostPregunta(ctx *gin.Context) {
+	var reqBody Pregunta
+	ctx.BindJSON(&reqBody)
+	preguntas = append(preguntas, reqBody)
+	ctx.JSON(200, preguntas)
+	return
+}
+
+func DeletePregunta(ctx *gin.Context) {
+	param := ctx.Param("id")
+	for index, pregunta := range preguntas {
+		if pregunta.ID == param {
+			preguntas = append(preguntas[:index], preguntas[index+1:]...)
+			ctx.JSON(200, gin.H{
+				"status":  "deleted",
+				"message": pregunta,
+			})
+			return
 		}
-		ctx.JSON(200, preguntas)
-	})
-
-	app.Run(":" + port)
+	}
+	ctx.JSON(404, gin.H{"message": "Question not found."})
 }
