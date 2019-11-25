@@ -2,20 +2,20 @@ package main
 
 import (
 	"os"
-	"github.com/csanso/.."
 	"github.com/gin-gonic/gin"
+	"github.com/csanso/libraries/preguntas-random-api/app"
+	"github.com/csanso/libraries/preguntas-random-api/routers"
 )
+
+type App struct {
+	APIController controllers.Controller
+}
 
 func main() {
 	port := os.Getenv("PORT")
-	api := gin.New()
-	// Routers
 
-	api.GET("/", controllers.API.Home)
-	api.GET("/preguntas", controllers.API.GetPreguntas)
-	api.GET("/preguntas/:id", controllers.API.GetPreguntaByID)
-	api.POST("/preguntas", controllers.API.PostPregunta)
-	api.DELETE("/preguntas/:id", controllers.API.DeletePregunta)
+	application := app.BuildApp()
+	router := routers.MakeRouter(application)
 
-	api.Run(":" + port)
+	router.Run(":" + port)
 }

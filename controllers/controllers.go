@@ -1,17 +1,23 @@
 
 package controllers
 
-type API struct {}
+type Controller interface {
+	Home(ctx *gin.Context)
+	GetPreguntas(ctx *gin.Context)
+	GetPreguntaByID(ctx *gin.Context)
+	PostPregunta(ctx *gin.Context)
+	DeletePregunta(ctx *gin.Context)
+}
 
-func (self *API) Home(ctx *gin.Context) {
+func (self *Controller) Home(ctx *gin.Context) {
 	ctx.String(200, "API Go funcionando v6")
 }
 
-func (self *API) GetPreguntas(ctx *gin.Context) {
+func (self *Controller) GetPreguntas(ctx *gin.Context) {
 	ctx.JSON(200, preguntas)
 }
 
-func (self *API) GetPreguntaByID(ctx *gin.Context) {
+func (self *Controller) GetPreguntaByID(ctx *gin.Context) {
 	param := ctx.Param("id")
 	for _, pregunta := range preguntas {
 		if pregunta.ID == param {
@@ -24,7 +30,7 @@ func (self *API) GetPreguntaByID(ctx *gin.Context) {
 	})
 }
 
-func (self *API) PostPregunta(ctx *gin.Context) {
+func (self *Controller) PostPregunta(ctx *gin.Context) {
 	var reqBody Pregunta
 	ctx.BindJSON(&reqBody)
 	preguntas = append(preguntas, reqBody)
@@ -32,7 +38,7 @@ func (self *API) PostPregunta(ctx *gin.Context) {
 	return
 }
 
-func (self *API) DeletePregunta(ctx *gin.Context) {
+func (self *Controller) DeletePregunta(ctx *gin.Context) {
 	param := ctx.Param("id")
 	for index, pregunta := range preguntas {
 		if pregunta.ID == param {
