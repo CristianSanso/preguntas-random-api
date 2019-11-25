@@ -39,9 +39,9 @@ func Home(ctx *gin.Context) {
 	Preguntas API V3
 	Base URL: https://preguntas-random.herokuapp.com/
 
-	GET    /preguntas 	   list all preguntas
+	GET    /preguntas      list all preguntas
 	GET    /preguntas/:id  return pregunta from id
-	POST   /preguntas	   create new pregunta
+	POST   /preguntas      create new pregunta
 	PUT    /preguntas/:id  modify existing pregunta
 	DELETE /preguntas/:id  delete existing pregunta
 
