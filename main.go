@@ -45,7 +45,7 @@ func Home(ctx *gin.Context) {
 	PUT    /preguntas/:id  modify existing pregunta
 	DELETE /preguntas/:id  delete existing pregunta
 
-	The body in POST, PUT and DELETE cases must be:
+	The body in POST and PUT cases must be:
 	{
 		"Id": "{id}",
 		"Content": "{content}"
